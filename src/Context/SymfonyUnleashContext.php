@@ -110,7 +110,9 @@ final class SymfonyUnleashContext implements Context
 
     public function getCustomProperty(string $name): string
     {
-        if (!$this->hasCustomProperty($name)) {
+        $value = $this->customProperties[$name];
+
+        if (!$value) {
             if ($this->eventDispatcher !== null) {
                 $event = new ContextValueNotFoundEvent($name);
                 $this->eventDispatcher->dispatch($event, UnleashEvents::CONTEXT_VALUE_NOT_FOUND);
@@ -120,11 +122,8 @@ final class SymfonyUnleashContext implements Context
                     return $value;
                 }
             }
-
-            throw new InvalidArgumentException("The context doesn't contain property named '{$name}'");
         }
 
-        $value = $this->customProperties[$name];
         if (
             $this->expressionLanguage !== null
             && str_starts_with($value, '>')
